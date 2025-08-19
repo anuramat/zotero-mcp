@@ -8,8 +8,14 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
 from dotenv import load_dotenv
-from markitdown import MarkItDown
 from pyzotero import zotero
+
+# Optional import for document conversion
+try:
+    from markitdown import MarkItDown
+    HAS_MARKITDOWN = True
+except ImportError:
+    HAS_MARKITDOWN = False
 
 from zotero_mcp.utils import format_creators
 
@@ -319,6 +325,9 @@ def convert_to_markdown(file_path: Union[str, Path]) -> str:
     Returns:
         Markdown text.
     """
+    if not HAS_MARKITDOWN:
+        return f"Document conversion not available. Install markitdown with: pip install markitdown"
+    
     try:
         md = MarkItDown()
         result = md.convert(str(file_path))

@@ -148,8 +148,8 @@
 
         # Full-featured package with all dependencies including ML/AI
         zotero-mcp-full = zotero-mcp.overrideAttrs (old: {
-          dependencies =
-            old.dependencies
+          propagatedBuildInputs =
+            old.propagatedBuildInputs
             ++ (with python.pkgs; [
               # Semantic search capabilities (heavy ML dependencies)
               chromadb

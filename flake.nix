@@ -92,6 +92,8 @@
           pname = "zotero-mcp";
           version = "0.1.0";
 
+          meta.mainProgram = "zotero-mcp";
+
           src = ./.;
           format = "pyproject";
 

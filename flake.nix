@@ -166,92 +166,11 @@
 
       in
       {
-        # Package variants
-        packages = {
-          default = zotero-mcp; # Minimal, fast build
-          full = zotero-mcp-full; # All features including ML/AI
-        };
-
-        # Development shell
-        devShells.default = pkgs.mkShell {
-          buildInputs = [
-            python
-            # Python development tools
-            python.pkgs.pip
-            python.pkgs.setuptools
-            python.pkgs.wheel
-            # Linting and formatting
-            python.pkgs.black
-            python.pkgs.isort
-            python.pkgs.pytest
-          ]
-          ++ zotero-mcp.dependencies
-          ++ zotero-mcp.build-system;
-
-          # Environment variables for development
-          shellHook = ''
-            echo "🧠 Zotero MCP Development Environment"
-            echo "📚 Available commands:"
-            echo "  - zotero-mcp --help    (CLI interface)"
-            echo "  - black src/           (format code)"
-            echo "  - isort src/           (sort imports)"
-            echo "  - pytest               (run tests if available)"
-            echo ""
-            echo "💡 Set environment variables for Zotero connection:"
-            echo "  export ZOTERO_LOCAL=true           # for local Zotero"
-            echo "  export ZOTERO_API_KEY=your_key     # for web API"
-            echo "  export ZOTERO_LIBRARY_ID=your_id   # for web API"
-            echo ""
-
-            # Make the package available in development
-            export PYTHONPATH="${zotero-mcp}/${python.sitePackages}:$PYTHONPATH"
-          '';
-        };
-
-        # CLI application
+        packages.default = zotero-mcp;
         apps.default = {
           type = "app";
           program = "${zotero-mcp}/bin/zotero-mcp";
         };
-
-        # Additional apps for specific commands (using wrapper scripts)
-        apps.setup = {
-          type = "app";
-          program = "${pkgs.writeShellScript "zotero-mcp-setup" ''
-            exec ${zotero-mcp}/bin/zotero-mcp setup "$@"
-          ''}";
-        };
-
-        apps.serve = {
-          type = "app";
-          program = "${pkgs.writeShellScript "zotero-mcp-serve" ''
-            exec ${zotero-mcp}/bin/zotero-mcp serve "$@"
-          ''}";
-        };
-
-        # Checks - basic build verification
-        checks = {
-          build = zotero-mcp;
-
-          # Format check
-          format-check =
-            pkgs.runCommand "format-check"
-              {
-                buildInputs = [
-                  python.pkgs.black
-                  python.pkgs.isort
-                ];
-              }
-              ''
-                cd ${self}
-                black --check src/ || (echo "Code is not formatted with black" && exit 1)
-                isort --check-only src/ || (echo "Imports are not sorted" && exit 1)
-                touch $out
-              '';
-        };
-
-        # Formatter for `nix fmt`
-        formatter = pkgs.nixpkgs-fmt;
       }
     );
 }

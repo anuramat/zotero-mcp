@@ -16,9 +16,8 @@
       system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
-        python = pkgs.python311;
+        python = pkgs.python312;
 
-        # Build missing Python packages from PyPI
         pyzotero = python.pkgs.buildPythonPackage rec {
           pname = "pyzotero";
           version = "1.6.11";
@@ -43,47 +42,6 @@
           meta = {
             description = "Python client for the Zotero API";
             homepage = "https://github.com/urschrei/pyzotero";
-          };
-        };
-
-        fastmcp = python.pkgs.buildPythonPackage rec {
-          pname = "fastmcp";
-          version = "2.8.0";
-          format = "wheel";
-
-          src = python.pkgs.fetchPypi {
-            inherit pname version;
-            format = "wheel";
-            python = "py3";
-            abi = "none";
-            platform = "any";
-            sha256 = "034wjhyq6hzx41v9q3ggwnq4271lhcjxsj8z72rmmmdciplnh93p";
-          };
-
-          dependencies = with python.pkgs; [
-            # Core MCP and validation
-            mcp
-            # CLI and UI
-            rich
-            typer
-            # HTTP and async
-            httpx
-            # Authentication
-            authlib
-            # OpenAPI
-            openapi-pydantic
-            # Config
-            python-dotenv
-            # Compatibility
-            exceptiongroup
-          ];
-
-          # Skip tests for now
-          doCheck = false;
-
-          meta = {
-            description = "FastMCP - A fast, simple way to build MCP servers";
-            homepage = "https://github.com/jlowin/fastmcp";
           };
         };
 
@@ -119,23 +77,16 @@
               # AI integrations
               openai
               google-genai
+              fastmcp
             ]
             ++ [
               # Custom packages built from PyPI
               pyzotero
-              fastmcp
             ];
 
           # Optional dependencies might include system packages for PDF processing
           buildInputs = with pkgs; [
             # Add any system dependencies needed for PDF processing, etc.
-          ];
-
-          # Development and test dependencies
-          nativeCheckInputs = with python.pkgs; [
-            pytest
-            black
-            isort
           ];
 
           # Skip tests and dependency checks for custom-built packages
@@ -154,7 +105,6 @@
             maintainers = [ ];
           };
         };
-
 
       in
       {

@@ -102,7 +102,7 @@
             hatchling
           ];
 
-          # Runtime dependencies - minimal for faster builds (excluding heavy ML deps)
+          # Runtime dependencies - full package with all features
           dependencies =
             with python.pkgs;
             [
@@ -111,7 +111,14 @@
               python-dotenv
               pydantic
               requests
-              # markitdown excluded from minimal build due to heavy ML dependencies
+              # Semantic search capabilities (ML dependencies)
+              chromadb
+              sentence-transformers
+              # Document processing
+              markitdown
+              # AI integrations
+              openai
+              google-genai
             ]
             ++ [
               # Custom packages built from PyPI
@@ -131,7 +138,7 @@
             isort
           ];
 
-          # Skip tests and dependency checks for minimal build
+          # Skip tests and dependency checks for custom-built packages
           doCheck = false;
           dontCheckRuntimeDeps = true;
 
@@ -148,21 +155,6 @@
           };
         };
 
-        # Full-featured package with all dependencies including ML/AI
-        zotero-mcp-full = zotero-mcp.overrideAttrs (old: {
-          propagatedBuildInputs =
-            old.propagatedBuildInputs
-            ++ (with python.pkgs; [
-              # Semantic search capabilities (heavy ML dependencies)
-              chromadb
-              sentence-transformers
-              # Document processing
-              markitdown
-              # AI integrations
-              openai
-              google-genai
-            ]);
-        });
 
       in
       {

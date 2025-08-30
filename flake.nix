@@ -55,7 +55,6 @@
           src = ./.;
           format = "pyproject";
 
-          # Build system dependencies
           build-system = with python.pkgs; [
             hatchling
           ];
@@ -80,23 +79,12 @@
               fastmcp
             ]
             ++ [
-              # Custom packages built from PyPI
               pyzotero
             ];
-
-          # Optional dependencies might include system packages for PDF processing
-          buildInputs = with pkgs; [
-            # Add any system dependencies needed for PDF processing, etc.
-          ];
 
           # Skip tests and dependency checks for custom-built packages
           doCheck = false;
           dontCheckRuntimeDeps = true;
-
-          # Install the CLI script
-          postInstall = ''
-            # The CLI is already handled by pyproject.toml [project.scripts]
-          '';
 
           meta = {
             description = "Model Context Protocol server for Zotero research libraries";
